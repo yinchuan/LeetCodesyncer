@@ -1,6 +1,7 @@
 // note: acknowledge https://stackoverflow.com/a/9517879
 // @todo to get language: localStorage.global_lang, not set when first open, it means cpp
 
+// add D and U buttons only when Run button is available
 var observer = new MutationObserver((mutations) => {
   const runButton = document.querySelector(
     '[data-e2e-locator="console-run-button"]'
@@ -29,41 +30,23 @@ const addButton = (copyFrom, text, onClick) => {
   copyFrom.parentNode.insertBefore(newButton, copyFrom);
 };
 
-// @todo click Run button after update
-window.addEventListener('message', (event) => {
-  if (event.data.type && event.data.type === 'LEETCODE_SYNCER_UPLOAD_RETURN') {
-    monaco.editor.getModels()[0].setValue(event.data.code);
-  }
-});
-
 const onDownloadClicked = () => {
   const title = getTitle();
   const url = document.URL;
   const level = getLevel();
   const code = monaco.editor.getModels()[0].getValue();
-  window.postMessage({
-    type: 'LEETCODE_SYNCER_DOWNLOAD',
-    title,
-    url,
-    level,
-    code,
-  });
+
+  let encoded = JSON.stringify({ title, url, level, code });
+  // console.log(encoded);
+  navigator.clipboard.writeText(encoded);
 };
 
 const onUploadClicked = () => {
-  const title = getTitle();
-  const lang = localStorage.getItem('global_lang').replace(/"/g, '');
-  const level = getLevel();
-  window.postMessage({
-    type: 'LEETCODE_SYNCER_UPLOAD',
-    title,
-    lang,
-    level,
+  navigator.clipboard.readText().then((content) => {
+    console.log(content);
+    monaco.editor.getModels()[0].setValue(content);
   });
 };
-
-// @todo note, how to monitor windows.postMessage()
-// monitorEvents(window, 'message') in console
 
 const getTitle = () => {
   const spans = Array.from(document.querySelectorAll('a[href^="/problems/"]'));
