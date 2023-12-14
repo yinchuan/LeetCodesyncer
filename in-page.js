@@ -51,7 +51,9 @@ const onUploadClicked = () => {
 const getTitle = () => {
   const spans = Array.from(document.querySelectorAll('a[href^="/problems/"]'));
   let texts = spans.map((e) => e.innerText.trim());
-  texts = texts.filter((e) => /^\d+.*[a-zA-Z].*/.test(e));
+  // title has the format: digits + '. ' + letters
+  // 2482. Difference Between Ones and Zeros in Row and Column
+  texts = texts.filter((e) => /^\d+\. .*[a-zA-Z].*/.test(e));
 
   if (texts.length === 0) {
     // alert('failed to get a title');
@@ -59,7 +61,7 @@ const getTitle = () => {
   }
 
   if (texts.length > 1) {
-    // alert('more than two titles');
+    alert('more than two titles');
     console.log(texts);
     return;
   }
