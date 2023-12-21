@@ -1,9 +1,17 @@
 // contentscript.js running in the context of web page, so it has access to all DOM
 
-// in-page.js can see the variables in the web page
+// injected script can see the variables in the web page
 // inject script to page, the script is to access monaco to get and set editor content
+
 var s = document.createElement('script');
-s.src = chrome.runtime.getURL('in-page.js');
+if (document.URL.startsWith('https://leetcode.com/problems')) {
+  // for problem page to downlaod and upload code
+  s.src = chrome.runtime.getURL('problems-page.js');
+} else if (
+  document.URL.startsWith('https://leetcode.com/explore/learn/card/')
+) {
+  s.src = chrome.runtime.getURL('card-page.js');
+}
 (document.head || document.documentElement).appendChild(s);
 
 // @todo note
