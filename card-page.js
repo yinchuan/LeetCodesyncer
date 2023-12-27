@@ -28,21 +28,27 @@ observer.observe(document.body, {
 });
 
 const addSearchLink = (titleElement) => {
-  // avoid add link again
-  if (
-    Array.from(titleElement.querySelectorAll('a')).some(
-      (e) => e.text == 'Search Question'
-    )
-  ) {
-    return;
-  }
-
-  let search = titleElement.textContent.trim().replaceAll(' ', '+');
+  const urlText = 'Search Question';
+  let exists = false;
+  let search = titleElement.textContent
+    .trim()
+    .replace(urlText, '')
+    .replaceAll(' ', '+');
   let searchURL = `https://leetcode.com/problemset/?search=${search}&page=1`;
 
+  // replace the link if exists
+  titleElement.querySelectorAll('a').forEach((node) => {
+    if (node.text.trim() == urlText) {
+      node.href = searchURL;
+      exists = true;
+    }
+  });
+  if (exists) return;
+
+  // add new one
   const link = document.createElement('a');
   link.href = searchURL;
-  link.textContent = 'Search Question';
+  link.textContent = urlText;
   link.target = '_blank';
   link.rel = 'noopener noreferrer'; // suggested by Bard for security
   titleElement.appendChild(link);
